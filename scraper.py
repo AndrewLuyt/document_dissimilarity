@@ -76,7 +76,7 @@ def scrapeWikiArticle(url, verbose=False):
     return (all_text, title, next_url)
 
 
-def scrapeArticles(firstURL, n_articles=10, sleepTime=0.2):
+def scrapeRandomArticles(firstURL, n_articles=10, sleepTime=0.2):
     """Returns a list of at most n_articles Wikipedia articles, each
     entry containing the text of the article, minus some arbitrary
     blacklisted text that is inside some html elements like
