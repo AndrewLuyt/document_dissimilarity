@@ -43,10 +43,10 @@ def scrapeWikiArticle(url, verbose=False):
     for link in all_links:
         if verbose:
             print("Trying: ", link)
-        # stay inside wikipedia: skip all outside links. All internal links are like <a href="/wiki/SOMETHING">
+        # stay inside wikipedia: All internal links are like <a href="/wiki/SOMETHING">
         # also skip special links like /wiki/Template, wiki/Special:
         if (
-            # some <a></a> links have no href tags at all. NB: link is a bs4.element.Tag object
+            # some <a></a> links have no href tags. NB: link is a bs4.element.Tag object
             "href" not in link.attrs
             or link["href"].find("/wiki/") == -1
             or link["href"].find(":") >= 0
@@ -110,17 +110,24 @@ def scrapeRandomArticles(firstURL, n_articles=10, sleepTime=0.2):
     return articles
 
 
+def scrapeArticles(urlList):
+    articles = []
+    for url in urlList:
+        article = scrapeWikiArticle(urlList)
+        articles.append((article[0], article[1]))
+    return articles
+
+
 def createDictionary(
     articles, max=1000, file="dictionary.obj", minWordLength=2, overwrite=False
 ):
-    """Create a set of the max most common words (all lowercase) in the article corpus."""
+    """Create a set of the max most common words (all lowercase) in the article
+    corpus."""
     if Path(file).exists() and overwrite is False:
         raise FileExistsError(
             file, "already exists. Set overwrite=True to overwrite it."
         )
 
-    # keep stopwords minimal. Even v. common words like "she" could distinguish
-    # some articles.
     stopWords = {"the", "to", "of", "in", "and", "or", "is", "that", "as"}
     d = defaultdict(int)
     for article in articles:
@@ -178,21 +185,3 @@ def documentDissimilarity(article1, article2, dictionary):
     wordvec2 = standardizeVector(wordvec2)
 
     return np.sqrt(np.sum((wordvec1 - wordvec2) ** 2))
-
-
-# print(scrapeWikiArticle("https://en.wikipedia.org/wiki/web_scraping"))
-# print(createDictionary(scrapeWikiArticle("https://en.wikipedia.org/wiki/web_scraping")))
-
-# make a standard dictionary so we don't have to do this every time, so the words
-# are in the same order, etc etc...
-# dictionary = createDictionary(
-#     scrapeArticles("https://en.wikipedia.org/wiki/Aaron_Halfaker", n_articles=4)
-# )
-# print(
-#     wordVector(
-#         scrapeWikiArticle("https://en.wikipedia.org/wiki/web_scraping"), dictionary
-#     ),
-# )
-
-# print(scrapeArticles("https://en.wikipedia.org/wiki/WDQ_(identifier)"))
-# print(scrapeWikiArticle("https://en.wikipedia.org/wiki/Aaron_Halfaker"))
