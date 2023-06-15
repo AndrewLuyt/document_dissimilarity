@@ -47,3 +47,4 @@ clearly show lower (*better*) scores.
 Word stemming would transform them all into one word, `agree`. Doing this over the entire dictionary, 
 *which is limited to 4000 words*, would
 allow for a much greater variety of words to be considered, probably improving the dissimilarity measurement.
+4. Use the angle between feature vectors as an alternate way of measuring document similarity, the so-called **cosine similarity**.
