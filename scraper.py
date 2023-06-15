@@ -137,14 +137,14 @@ def createDictionary(
                 d[word] += 1
 
     c = Counter(d)
-    sorted_wordlist = sorted([word for word, _ in c.most_common(max)])
+    sorted_wordlist = tuple(sorted([word for word, _ in c.most_common(max)]))
     with open(file, "wb") as f:
         pickle.dump(sorted_wordlist, f, pickle.HIGHEST_PROTOCOL)
 
 
 def loadDictionary(file="dictionary.obj"):
     with open(file, "rb") as f:
-        return pickle.load(f)
+        return tuple(pickle.load(f))  # old versions were unhashable lists
 
 
 def mostCommonWords(n, wordCounts, dictionary):
