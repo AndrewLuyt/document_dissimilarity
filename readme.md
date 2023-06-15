@@ -5,7 +5,8 @@ to have an automated procedure to find a document that's similar to
 the one you're currently looking at.  For example, a forensic accountant
 might want to look at more expense reports that are in some way similar
 to one that caught her eye, but there might be tens of thousands of such
-reports.
+reports. Techniques such as the one illustrated here are part of the
+field of **text mining**.
 
 By summarizing a document as a simple vector of word counts, we can use
 some simple linear algebra to compare documents and get a measure for
