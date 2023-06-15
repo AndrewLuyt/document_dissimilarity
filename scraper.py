@@ -177,6 +177,16 @@ def standardizeVector(v):
 
 
 def documentDissimilarity(article1, article2, dictionary):
+    # ensure arguments are in the same order if we compare the
+    # same two documents. This lets us hit the lru_cache.
+    if article1 < article2:
+        return _documentDissimilarity(article1, article2, dictionary)
+    else:
+        return _documentDissimilarity(article2, article1, dictionary)
+
+
+@lru_cache
+def _documentDissimilarity(article1, article2, dictionary):
     wordvec1 = wordVector(article1, dictionary)
     wordvec2 = wordVector(article2, dictionary)
 
