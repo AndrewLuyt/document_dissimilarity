@@ -19,4 +19,4 @@ print()
 
 # Create a dictionary of the 'max' most common words and save
 # it to dictionary.obj
-scraper.createDictionary(dict_corpus, max=4000, minWordLength=4)
+scraper.createDictionary(dict_corpus, maxWords=4000, minWordLength=4)

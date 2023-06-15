@@ -51,12 +51,6 @@ def scrapeWikiArticle(url, verbose=False):
             or link["href"].find("/wiki/") == -1
             or link["href"].find(":") >= 0
             or link["href"].find("/wiki/Template") >= 0
-            # or link["href"].find("wiki/Special:") >= 0
-            # or link["href"].find("/wiki/Help:") >= 0
-            # or link["href"].find("/wiki/Category:") >= 0
-            # or link["href"].find("/wiki/File:") >= 0
-            # or link["href"].find("/wiki/User:") >= 0
-            # or link["href"].find("/wiki/Wikipedia:") >= 0
         ):
             continue
         next_link = link["href"]
@@ -89,11 +83,11 @@ def scrapeWikiArticle(url, verbose=False):
 
 
 def scrapeRandomArticles(firstURL, n_articles=10, sleepTime=0.2):
-    """Returns a list of at most n_articles Wikipedia articles, each
-    entry containing the text of the article, minus some arbitrary
-    blacklisted text that is inside some html elements like
-    [document], meta, noscript, etc.
-    it's a list of tuples (TEXT, URL, TITLE)
+    """Returns a list of Wikipedia articles, each entry containing the text of the
+    article, minus some arbitrary blacklisted text.
+
+    firstURL: a string with the Wikipedia URL to start with.
+    n_articles: integer,
     sleepTime: number of seconds to wait between grabbing wikipedia articles"""
     first = scrapeWikiArticle(firstURL)
     title = first[1]
@@ -111,6 +105,9 @@ def scrapeRandomArticles(firstURL, n_articles=10, sleepTime=0.2):
 
 
 def scrapeArticles(urlList):
+    """Returns a list of articles, as per scrapeWikiArticle.
+
+    urlList: list of strings. Each string is a URL of a Wikipedia article."""
     articles = []
     for url in urlList:
         article = scrapeWikiArticle(urlList)
@@ -119,10 +116,16 @@ def scrapeArticles(urlList):
 
 
 def createDictionary(
-    articles, max=1000, file="dictionary.obj", minWordLength=2, overwrite=False
+    articles, maxWords=1000, file="dictionary.obj", minWordLength=2, overwrite=False
 ):
     """Create a set of the max most common words (all lowercase) in the article
-    corpus."""
+    corpus. Intended to be used on the output of scrapeRandomArticles.
+
+    articles: output of scrapeRandomArticles
+    maxWords: int, return the [maxWords] most common words in the article corpus
+    file: string, name of the dictionary file. Just leave as dictionary.obj
+    minWordLength: remove all words shorter than this many letters
+    overwrite: if <file> exists, should it be overwritten?"""
     if Path(file).exists() and overwrite is False:
         raise FileExistsError(
             file, "already exists. Set overwrite=True to overwrite it."
@@ -137,22 +140,26 @@ def createDictionary(
                 d[word] += 1
 
     c = Counter(d)
-    sorted_wordlist = tuple(sorted([word for word, _ in c.most_common(max)]))
+    sorted_wordlist = tuple(sorted([word for word, _ in c.most_common(maxWords)]))
     with open(file, "wb") as f:
         pickle.dump(sorted_wordlist, f, pickle.HIGHEST_PROTOCOL)
 
 
 def loadDictionary(file="dictionary.obj"):
+    """Returns a tuple containing all dictionary words. A 'dictionary' in this
+    sense is the list of words which will be counted in a document to create
+    its feature vector. Any word not in the dictionary isn't considered.
+
+    file: string name of the dictionary file"""
     with open(file, "rb") as f:
         return tuple(pickle.load(f))  # old versions were unhashable lists
 
 
-def mostCommonWords(n, wordCounts, dictionary):
-    c = Counter(wordCounts)
-    return c.most_common(n)
+def _wordCounts(article, dictionary):
+    """Return the count of all words in article, for those words in dictionary
 
-
-def wordCounts(article, dictionary):
+    article: output of scrapeWikiArticle or similar
+    dictionary: tuple of strings, the output of loadDictionary"""
     word_counts = dict()
     # Python 3.7: "Dictionary order is guaranteed to be insertion order."
     # We can rely on .keys() and .values() to keep their order.
@@ -166,17 +173,29 @@ def wordCounts(article, dictionary):
 
 
 def wordVector(article, dictionary):
-    counts = wordCounts(article, dictionary)
+    """Return the feature vector for article.
+
+    article: output of scrapeWikiArticle or similar
+    dictionary: tuple of strings, the output of loadDictionary"""
+    counts = _wordCounts(article, dictionary)
     return np.array(list(counts.values()))
 
 
 def standardizeVector(v):
-    """Assumes v is a numpy array"""
+    """Transforms values in v to [0,1]
+
+    v: a numpy ndarray"""
     v = v - min(v)
     return v / max(v)
 
 
 def documentDissimilarity(article1, article2, dictionary):
+    """Return a dissimilarity score between articles. Higher is more dissimilar.
+    Lowest value possible is 0, for documents with identical feature vectors.
+
+    article1, article2: a string, the full text of the article.
+    dictionary: tuple of strings, output of loadDictionary"""
+
     # ensure arguments are in the same order if we compare the
     # same two documents. This lets us hit the lru_cache.
     if article1 < article2:
