@@ -1,4 +1,6 @@
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 import random
 from bs4 import BeautifulSoup
 from collections import defaultdict, Counter
@@ -6,16 +8,26 @@ from pathlib import Path
 import pickle
 import numpy as np
 import time
+from functools import lru_cache
 
 
 # https://matix.io/extract-text-from-webpage-using-beautifulsoup-and-python/
 # importantly, skipping text from non-text elements
+@lru_cache
 def scrapeWikiArticle(url, verbose=False):
     """Returns a tuple containing
     [0] all the text content of the page,
     [1] the title of the page
-    [2] a random URL inside the page, meant to be used by scrapeArticles()"""
-    response = requests.get(url)
+    [2] a random URL inside the page, meant to be used by scrapeRandomArticles()"""
+
+    # https://stackoverflow.com/questions/23013220/max-retries-exceeded-with-url-in-requests
+    session = requests.Session()
+    retry = Retry(connect=3, read=3, backoff_factor=2)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
+    response = session.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
     # Find all the links. Search only in the content, not the navigation.
