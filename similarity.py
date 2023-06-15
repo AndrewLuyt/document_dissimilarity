@@ -1,30 +1,40 @@
 import scraper
+import numpy as np
+import pandas as pd
+import seaborn as sns  # fmt: skip
+import matplotlib.pyplot as plt
 
 dictionary = scraper.loadDictionary()
-# print(dictionary[1200])
-# exit()
 
-# a1 = "https://en.wikipedia.org/wiki/Elim_Garak"
-a1 = "https://en.wikipedia.org/wiki/Benjamin_Sisko"
-a2 = "https://en.wikipedia.org/wiki/Star_Trek"
-a1 = "https://en.wikipedia.org/wiki/web_scraping"
-# a2 = "https://en.wikipedia.org/wiki/web_scraping"
-# a2 = "https://en.wikipedia.org/wiki/Data_scraping"
-# a1 = "https://en.wikipedia.org/wiki/Vector_space"
-# a2 = "https://en.wikipedia.org/wiki/Vector_field"
-# a1 = "https://en.wikipedia.org/wiki/Archtop_guitar"
-# a1 = "https://en.wikipedia.org/wiki/Guitar"
-# a1 = "https://en.wikipedia.org/wiki/Electric_guitar"
-# a1 = "https://en.wikipedia.org/wiki/Steel-string_acoustic_guitar"
-# a2 = "https://en.wikipedia.org/wiki/Classical_guitar"
-a2 = "https://en.wikipedia.org/wiki/Musical_instrument"
-article1 = scraper.scrapeWikiArticle(a1, verbose=False)  # nb: article is in [0]
-article2 = scraper.scrapeWikiArticle(a2, verbose=False)
+urls = [
+    "https://en.wikipedia.org/wiki/James_T._Kirk",
+    "https://en.wikipedia.org/wiki/Spock",
+    "https://en.wikipedia.org/wiki/Star_Trek",
+    "https://en.wikipedia.org/wiki/web_scraping",
+    "https://en.wikipedia.org/wiki/Data_scraping",
+    "https://en.wikipedia.org/wiki/Vector_space",
+    "https://en.wikipedia.org/wiki/Vector_field",
+    "https://en.wikipedia.org/wiki/Guitar",
+    "https://en.wikipedia.org/wiki/Electric_guitar",
+    "https://en.wikipedia.org/wiki/Classical_guitar",
+    "https://en.wikipedia.org/wiki/Musical_instrument",
+]
+url_names = [url.split("/")[-1] for url in urls]
 
-# wc = scraper.wordCounts(article[0], dictionary)
-# print(wc.values())
-# print(scraper.mostCommonWords(30, wc, dictionary))
-# print(list(wc.items())[1000:1010])
-# print(scraper.wordVector(article[0], dictionary))
-# print(type(scraper.wordVector(article1[0], dictionary)))
-print(scraper.documentDissimilarity(article1[0], article2[0], dictionary))
+dissimilarityMatrix = pd.DataFrame(np.nan, columns=url_names, index=url_names)
+for i in range(len(urls)):
+    for j in range(i + 1, len(urls)):  # upper triangle, no diagonal
+        dissimilarityMatrix.iloc[i, j] = scraper.documentDissimilarity(
+            scraper.scrapeWikiArticle(urls[i])[0],
+            scraper.scrapeWikiArticle(urls[j])[0],
+            dictionary,
+        )
+
+print(dissimilarityMatrix.T)
+dissimilarityMatrix = dissimilarityMatrix.T.iloc[1:, :]  # flip & trim matrix
+print(scraper.scrapeWikiArticle.cache_info())
+sns.heatmap(dissimilarityMatrix, annot=True, cmap=plt.get_cmap("coolwarm").reversed())
+plt.title("How different do Wikipedia articles appear to linear algebra?")
+
+plt.tight_layout()
+plt.show()
