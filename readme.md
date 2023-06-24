@@ -23,7 +23,9 @@ standardized to $[0, 1]$. *Dictionary* in this context can be read
 as *allowed words for the purpose of this analysis.*
 
 The dissimilarity of two documents is then computed as the L2 norm of the difference
-of their standardized feature vectors: $\large \text{diff} = \lVert f_1 - f_2 \rVert$  
+of their standardized feature vectors: $\large \text{diff} = \lVert f_1 - f_2 \rVert$ 
+Alternately, cosine similarity can be used, with the angle between feature vectors
+$\theta = \frac{f_1\cdot f_2}{\lVert f_1\rVert \lVert f_2\rVert}$
 
 A feature vector of this kind doesn't account for which words are next to
 one another or in the same sentence or paragraph. It doesn't matter 
@@ -48,4 +50,4 @@ clearly show lower (*better*) scores.
 Word stemming would transform them all into one word, `agree`. Doing this over the entire dictionary, 
 *which is limited to 4000 words*, would
 allow for a much greater variety of words to be considered, probably improving the dissimilarity measurement.
-4. Use the angle between feature vectors as an alternate way of measuring document similarity, the so-called **cosine similarity**.
+4. ~~Use the angle between feature vectors as an alternate way of measuring document similarity, the so-called **cosine similarity**.~~ Done.
