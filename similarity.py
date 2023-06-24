@@ -1,3 +1,8 @@
+# Given a list of wikipedia article URLS (currently hardcoded), compute
+# a dissimilarity matrix between articles. By editing the value of
+# `dissimilarity_metric` to "cosine" or "distance", one can use cosine
+# similarity or the l2 norm of the vector difference as a dissimilarity metric.
+
 import scraper
 import numpy as np
 import pandas as pd
@@ -5,6 +10,8 @@ import seaborn as sns  # fmt: skip
 import matplotlib.pyplot as plt
 
 dictionary = scraper.loadDictionary()
+
+dissimilarity_metric = "cosine"  # "cosine" or "distance"
 
 urls = [
     "https://en.wikipedia.org/wiki/James_T._Kirk",
@@ -31,6 +38,7 @@ for i in range(len(urls)):
             scraper.scrapeWikiArticle(urls[i])[0],
             scraper.scrapeWikiArticle(urls[j])[0],
             dictionary,
+            dissimilarity_metric,
         )
 
 print(dissimilarityMatrix)

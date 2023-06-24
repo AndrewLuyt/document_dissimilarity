@@ -189,23 +189,25 @@ def standardizeVector(v):
     return v / max(v)
 
 
-def documentDissimilarity(article1, article2, dictionary):
+def documentDissimilarity(article1, article2, dictionary, method="distance"):
     """Return a dissimilarity score between articles. Higher is more dissimilar.
     Lowest value possible is 0, for documents with identical feature vectors.
 
     article1, article2: a string, the full text of the article.
-    dictionary: tuple of strings, output of loadDictionary"""
+    dictionary: tuple of strings, output of loadDictionary
+    method: one of 'distance', 'cosine' which calculate, respectively,
+            the norm of the difference vector, and cosine similarity."""
 
     # ensure arguments are in the same order if we compare the
     # same two documents. This lets us hit the lru_cache.
     if article1 < article2:
-        return _documentDissimilarity(article1, article2, dictionary)
+        return _documentDissimilarity(article1, article2, dictionary, method)
     else:
-        return _documentDissimilarity(article2, article1, dictionary)
+        return _documentDissimilarity(article2, article1, dictionary, method)
 
 
 @lru_cache
-def _documentDissimilarity(article1, article2, dictionary):
+def _documentDissimilarity(article1, article2, dictionary, method):
     wordvec1 = wordVector(article1, dictionary)
     wordvec2 = wordVector(article2, dictionary)
 
@@ -213,4 +215,10 @@ def _documentDissimilarity(article1, article2, dictionary):
     wordvec1 = standardizeVector(wordvec1)
     wordvec2 = standardizeVector(wordvec2)
 
-    return np.sqrt(np.sum((wordvec1 - wordvec2) ** 2))
+    if method == "distance":
+        return np.sqrt(np.sum((wordvec1 - wordvec2) ** 2))
+    elif method == "cosine":
+        return np.arccos(
+            np.dot(wordvec1, wordvec2)
+            / (np.linalg.norm(wordvec1, ord=2) * np.linalg.norm(wordvec2, ord=2))
+        )
