@@ -11,14 +11,16 @@ pip install -r requirements.txt
 
 =============================================================
 2. (OPTIONAL) Create the word dictionary
-This will take some time, depending on the speed of your  internet connection.
-A default dictionary.obj is provided, but if you want to build a larger 
-one, you can modify and run this script.
+   A default dictionary.obj is provided, but if you want to build a larger 
+   one, you can modify and run this script.
+   This will take some time, depending on the speed of your  internet connection
+   and the argument to sleepTime.
 =============================================================
 python setup_dictionary.py
 
 
 =============================================================
-3. Create and plot the similarity matrix
+3. Create and plot the similarity matrix. This should take
+   less than a minute.
 =============================================================
 python similarity.py
