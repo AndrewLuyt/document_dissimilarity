@@ -11,6 +11,9 @@ to one that caught her eye, but there might be tens of thousands of such
 reports. Techniques such as the one illustrated here are part of the
 field of **text mining**.
 
+**This document presents a high-level overview. Code implementing 
+everything discussed here is available in the [Github repository](https://github.com/AndrewLuyt/document_dissimilarity)**
+
 By summarizing a document as a simple vector of word counts, we can use
 some simple linear algebra to compare documents and get a measure for
 their **dis**similarity.  With this measure, low values mean documents

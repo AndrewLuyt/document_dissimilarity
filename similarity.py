@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 dictionary = scraper.loadDictionary()
 
-dissimilarity_metric = "cosine"  # "cosine" or "distance"
+dissimilarity_metric = "distance"  # "cosine" or "distance"
 
 urls = [
     "https://en.wikipedia.org/wiki/James_T._Kirk",
