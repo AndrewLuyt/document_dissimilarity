@@ -24,3 +24,9 @@ python setup_dictionary.py
    less than a minute.
 =============================================================
 python similarity.py
+
+
+=============================================================
+Using a different similarity metric
+=============================================================
+Change dissimilarity_metric="distance" to "cosine" in similarity.py
