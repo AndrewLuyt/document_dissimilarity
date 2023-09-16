@@ -1,0 +1,24 @@
+These instructions are for a linux or other unix-like system.
+
+
+=============================================================
+1. Create a python virtual environment and install dependencies
+=============================================================
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+
+=============================================================
+2. (OPTIONAL) Create the word dictionary
+This will take some time, depending on the speed of your  internet connection.
+A default dictionary.obj is provided, but if you want to build a larger 
+one, you can modify and run this script.
+=============================================================
+python setup_dictionary.py
+
+
+=============================================================
+3. Create and plot the similarity matrix
+=============================================================
+python similarity.py
