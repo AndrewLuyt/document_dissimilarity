@@ -6,8 +6,11 @@
 import scraper
 import numpy as np
 import pandas as pd
-import seaborn as sns  # fmt: skip
+
+# import seaborn as sns  # fmt: skip
 import matplotlib.pyplot as plt
+from heatmap import heatmap, annotate_heatmap
+
 
 dictionary = scraper.loadDictionary()
 
@@ -45,13 +48,26 @@ print(dissimilarityMatrix)
 # dissimilarityMatrix = dissimilarityMatrix.T.iloc[1:, :]  # flip & trim matrix
 print(scraper.scrapeWikiArticle.cache_info())
 print(scraper._documentDissimilarity.cache_info())
-sns.heatmap(
-    dissimilarityMatrix,
-    annot=True,
-    cmap=plt.get_cmap("coolwarm").reversed(),
-    linewidths=0.1,
-    linecolor="black",
+# sns.heatmap(
+#     dissimilarityMatrix,
+#     annot=True,
+#     cmap=plt.get_cmap("coolwarm").reversed(),
+#     linewidths=0.1,
+#     linecolor="black",
+# )
+
+fig, ax = plt.subplots()
+labels = dissimilarityMatrix.index.values
+im, cbar = heatmap(
+    dissimilarityMatrix.to_numpy(),
+    labels,
+    labels,
+    ax,
+    cmap="coolwarm",
+    cbarlabel="Similarity [lower is better]",
 )
+texts = annotate_heatmap(im, valfmt="{x:.1f}")
+
 plt.title("Measuring dissimilarity between Wikipedia Articles")
 
 plt.tight_layout()
