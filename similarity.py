@@ -63,7 +63,7 @@ im, cbar = heatmap(
     labels,
     labels,
     ax,
-    cmap="coolwarm",
+    cmap=plt.get_cmap("coolwarm").reversed(),
     cbarlabel="Similarity [lower is better]",
 )
 texts = annotate_heatmap(im, valfmt="{x:.1f}")
