@@ -1,3 +1,7 @@
+Document Similarity
+================
+Andrew Luyt
+2023-09-14
 
 It can be a useful thing, if you have a large collection of documents,
 to have an automated procedure to find a document that's similar to
