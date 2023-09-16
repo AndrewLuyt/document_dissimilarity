@@ -1,4 +1,3 @@
-# Document Similarity
 
 It can be a useful thing, if you have a large collection of documents,
 to have an automated procedure to find a document that's similar to
