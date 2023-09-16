@@ -68,7 +68,7 @@ im, cbar = heatmap(
 )
 texts = annotate_heatmap(im, valfmt="{x:.1f}")
 
-plt.title("Measuring dissimilarity between Wikipedia Articles")
+plt.title("Measuring similarity between Wikipedia articles")
 
 plt.tight_layout()
 plt.show()
